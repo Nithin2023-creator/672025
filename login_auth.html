@@ -731,11 +731,13 @@
     
             
             <div id="g_id_onload"
-         data-client_id="940020976752-ee8dupcuupmhepgsu70dcvsou7vs3rpi.apps.googleusercontent.com"
-         data-callback="handleGoogleSignIn"
-         data-auto_prompt="false"
-         data-auto_select="true"
-         data-redirect_uri="https://672025.vercel.app/auth/google/callback"></div>
+                data-client_id="940020976752-ee8dupcuupmhepgsu70dcvsou7vs3rpi.apps.googleusercontent.com"
+                data-context="signin"
+                data-ux_mode="redirect"
+                data-login_uri="https://672025.vercel.app/auth/google"
+                data-auto_prompt="false"
+                data-auto_select="true">
+            </div>
     </div>
     <div class="g_id_signin"
              data-type="standard"
@@ -953,19 +955,8 @@ const backendUrl = window.location.hostname === 'localhost' ?
             }
         }
        
-        function handleGoogleSignIn(response){
-            const clientId = '940020976752-ee8dupcuupmhepgsu70dcvsou7vs3rpi.apps.googleusercontent.com';
-            const backendUrl = window.location.hostname === 'localhost' ? 
-    'http://localhost:4009' : 
-    'https://672025.vercel.app';
-    const redirectUri = encodeURIComponent('https://672025.vercel.app/auth/google/callback');
-    const scope = encodeURIComponent('profile email');
-    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}&access_type=offline&prompt=consent`;
+        function handleGoogleSignIn(response) {
             if (response.credential) {
-                const backendUrl = window.location.hostname === 'localhost' ? 
-            'http://localhost:4009' : 
-            'https://672025.vercel.app';
-                // Get user info from the credential
                 fetch(`${backendUrl}/auth/google`, {
                     method: 'POST',
                     headers: {
@@ -975,7 +966,12 @@ const backendUrl = window.location.hostname === 'localhost' ?
                         token: response.credential
                     })
                 })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     if (data.success) {
                         localStorage.setItem('userName', data.name);
@@ -993,6 +989,7 @@ const backendUrl = window.location.hostname === 'localhost' ?
                             window.location.href = '/admin_dashboard';
                         }
                     } else {
+                        console.error('Login failed:', data.message);
                         alert('Login failed: ' + data.message);
                     }
                 })
