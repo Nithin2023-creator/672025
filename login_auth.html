@@ -735,7 +735,7 @@
          data-callback="handleGoogleSignIn"
          data-auto_prompt="false"
          data-auto_select="true"
-         data-redirect_uri="https://fdms-kmit.vercel.app/auth/google/callback"></div>
+         data-redirect_uri="https://672025.vercel.app/auth/google/callback"></div>
     </div>
     <div class="g_id_signin"
              data-type="standard"
@@ -958,7 +958,7 @@ const backendUrl = window.location.hostname === 'localhost' ?
             const backendUrl = window.location.hostname === 'localhost' ? 
     'http://localhost:4009' : 
     'https://672025.vercel.app';
-    const redirectUri = encodeURIComponent('https://fdms-kmit.vercel.app/auth/google/callback');
+    const redirectUri = encodeURIComponent('https://672025.vercel.app/auth/google/callback');
     const scope = encodeURIComponent('profile email');
     const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}&access_type=offline&prompt=consent`;
             if (response.credential) {
