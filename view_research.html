@@ -212,7 +212,7 @@
                 const type = document.getElementById('typeFilter').value;
                 console.log('Fetching research with filters:', { department, type });
 
-                const response = await fetch(`http://localhost:4009/api/research/all?department=${department}&type=${type}`, {
+                const response = await fetch(`https://672025.vercel.app/api/research/all?department=${department}&type=${type}`, {
                     method: 'GET',
                     headers: {
                         'Accept': 'application/json'
@@ -275,7 +275,7 @@
                 return;
             }
             // Open PDF in a new window using the dedicated endpoint
-            const url = `http://localhost:4009/api/research/document/${filename}`;
+            const url = `https://672025.vercel.app/api/research/document/${filename}`;
             console.log('Opening PDF:', url);
             
             // Create a modal to display the PDF

@@ -216,7 +216,7 @@
         async function loadFacultyMembers() {
         try {
             const hodDepartment = localStorage.getItem('userDepartment');
-            const response = await fetch(`http://localhost:4009/api/faculty/department/${hodDepartment}`);
+            const response = await fetch(`https://672025.vercel.app/api/faculty/department/${hodDepartment}`);
             const data = await response.json();
 
             const container = document.getElementById('facultyContainer');
@@ -254,7 +254,7 @@ window.onload = async function() {
 async function loadFacultyCount() {
     try {
         const userDepartment = localStorage.getItem('userDepartment');
-        const response = await fetch(`http://localhost:4009/api/faculty/count/${userDepartment}`);
+        const response = await fetch(`https://672025.vercel.app/api/faculty/count/${userDepartment}`);
         const data = await response.json();
 
         if (data.success) {
@@ -272,7 +272,7 @@ async function loadFacultyCount() {
         async function loadFacultyData() {
             try {
                 // First get all users who are faculty
-                const usersResponse = await fetch('http://localhost:4009/api/users');
+                const usersResponse = await fetch('https://672025.vercel.app/api/users');
                 const allUsers = await usersResponse.json();
                 
                 // Filter faculty by HOD's department
@@ -284,7 +284,7 @@ async function loadFacultyCount() {
                 // Get details for each faculty member
                 const facultyDetailsPromises = departmentFaculty.map(async (faculty) => {
                     try {
-                        const detailsResponse = await fetch(`http://localhost:4009/api/faculty/details/byEmail/${faculty.email}`);
+                        const detailsResponse = await fetch(`https://672025.vercel.app/api/faculty/details/byEmail/${faculty.email}`);
                         const detailsData = await detailsResponse.json();
                         return {
                             ...faculty,
@@ -358,7 +358,7 @@ async function loadFacultyCount() {
 
         async function showDetails(email) {
             try {
-                const response = await fetch(`http://localhost:4009/api/faculty/details/byEmail/${email}`);
+                const response = await fetch(`https://672025.vercel.app/api/faculty/details/byEmail/${email}`);
                 const data = await response.json();
 
                 if (data.success) {

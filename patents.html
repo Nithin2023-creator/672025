@@ -264,7 +264,7 @@
             throw new Error('User not logged in');
         }
 
-        const response = await fetch(`http://localhost:4009/api/patents/${userEmail}`);
+        const response = await fetch(`https://672025.vercel.app/api/patents/${userEmail}`);
         
         // Check if response is OK
         if (!response.ok) {
@@ -309,7 +309,7 @@ container.innerHTML = data.patents.map(patent => {
                 ${patent.publicationDate ? `<p><strong>Published:</strong> ${pubDate}</p>` : ''}
                 ${patent.grantDate ? `<p><strong>Granted:</strong> ${grantDate}</p>` : ''}
                 ${patent.documentPath ? 
-                    `<a href="http://localhost:4009/api/patents/document/${patent.documentPath}" 
+                    `<a href="https://672025.vercel.app/api/patents/document/${patent.documentPath}" 
                        target="_blank" 
                        class="btn btn-primary mt-2">
                         View Document
@@ -398,7 +398,7 @@ document.getElementById('patentForm').addEventListener('submit', async (e) => {
             throw new Error('Please select a document to upload');
         }
 
-        const response = await fetch('http://localhost:4009/api/patents/submit', {
+        const response = await fetch('https://672025.vercel.app/api/patents/submit', {
             method: 'POST',
             body: formData
         });
@@ -435,7 +435,7 @@ function viewPatentDocument(filename) {
     }
 
     // First check if the file exists by making a HEAD request
-    fetch(`http://localhost:4009/api/patents/document/${encodeURIComponent(filename)}`, {
+    fetch(`https://672025.vercel.app/api/patents/document/${encodeURIComponent(filename)}`, {
         method: 'HEAD'
     })
     .then(response => {
@@ -467,7 +467,7 @@ function viewPatentDocument(filename) {
         `;
         
         // Add a timestamp to prevent caching issues
-        iframe.src = `http://localhost:4009/api/patents/document/${encodeURIComponent(filename)}?t=${Date.now()}`;
+        iframe.src = `https://672025.vercel.app/api/patents/document/${encodeURIComponent(filename)}?t=${Date.now()}`;
 
         const closeBtn = document.createElement('button');
         closeBtn.textContent = '×';
@@ -586,7 +586,7 @@ function viewPatentDocument(filename) {
             }
 
             try {
-                const response = await fetch('http://localhost:4009/api/patents/submit', {
+                const response = await fetch('https://672025.vercel.app/api/patents/submit', {
                     method: 'POST',
                     body: formData
                 });

@@ -424,7 +424,7 @@
         // Fetch and display user statistics
         async function fetchUserStats() {
             try {
-                const response = await fetch('http://localhost:4009/api/users');
+                const response = await fetch('https://672025.vercel.app/api/users');
                 const users = await response.json();
 
                 // Calculate statistics
@@ -449,7 +449,7 @@
 
         async function loadFacultyStats() {
             try {
-                const response = await fetch('http://localhost:4009/api/faculty/stats');
+                const response = await fetch('https://672025.vercel.app/api/faculty/stats');
                 const data = await response.json();
 
                 const ctx = document.getElementById('facultyPieChart').getContext('2d');
@@ -505,7 +505,7 @@
             }
 
             try {
-                const response = await fetch('http://localhost:4009/api/notifications', {
+                const response = await fetch('https://672025.vercel.app/api/notifications', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

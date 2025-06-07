@@ -146,7 +146,7 @@
                 const type = document.getElementById('typeFilter').value; // Get filter value
                 console.log('Fetching publications with type:', type);
     
-                const response = await fetch(`http://localhost:4009/api/research`);
+                const response = await fetch(`https://672025.vercel.app/api/research`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -203,7 +203,7 @@
         alert('Document not available');
         return;
     }
-    const url = `http://localhost:4009/uploads/research/${filename}`;
+    const url = `https://672025.vercel.app/uploads/research/${filename}`;
     window.open(url, '_blank');
 }
 
@@ -212,7 +212,7 @@
 
     async function loadPublicationCounts() {
         try {
-            const response = await fetch('http://localhost:4009/api/research');
+            const response = await fetch('https://672025.vercel.app/api/research');
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }

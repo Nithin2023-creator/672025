@@ -96,7 +96,7 @@
     <script>
         async function loadWorkshops() {
             try {
-                const response = await fetch('http://localhost:4009/api/workshops');
+                const response = await fetch('https://672025.vercel.app/api/workshops');
                 const data = await response.json();
                 
                 if (data.success) {
@@ -128,7 +128,7 @@
         }
 
         function viewCertificate(id) {
-            window.open(`http://localhost:4009/api/workshop/certificate/${id}`, '_blank');
+            window.open(`https://672025.vercel.app/api/workshop/certificate/${id}`, '_blank');
         }
 
         // Load workshops when page loads

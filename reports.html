@@ -550,7 +550,7 @@
         async function loadFacultyData() {
             try {
                 // First get all users who are faculty or HOD
-                const usersResponse = await fetch('http://localhost:4009/api/admin/faculty-details');
+                const usersResponse = await fetch('https://672025.vercel.app/api/admin/faculty-details');
                 const allUsers = await usersResponse.json();
                 
                 // Filter for both faculty and HOD users
@@ -970,7 +970,7 @@ async function editFaculty(email) {
             sessionStorage.setItem('editFacultyData', JSON.stringify(facultyData));
             
             // Use the complete URL with http://localhost:4009 and remove mode parameter
-            window.location.href = 'http://localhost:4009/faculty_profile';
+            window.location.href = 'https://672025.vercel.app/faculty_profile';
         } else {
             throw new Error('Faculty data not found');
         }
@@ -984,7 +984,7 @@ async function editFaculty(email) {
 
         async function viewDetails(email) {
             try {
-                const response = await fetch(`http://localhost:4009/api/faculty/details/byEmail/${email}`);
+                const response = await fetch(`https://672025.vercel.app/api/faculty/details/byEmail/${email}`);
                 const data = await response.json();
 
                 if (data.success) {
@@ -1099,7 +1099,7 @@ async function editFaculty(email) {
                     experiences: collectModalData(modal, 'experience')
                 };
 
-                const response = await fetch('http://localhost:4009/api/faculty/details/update', {
+                const response = await fetch('https://672025.vercel.app/api/faculty/details/update', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

@@ -302,7 +302,7 @@ async function fetchWorkshops() {
         }
 
         function viewCertificate(filename) {
-            window.open(`http://localhost:4009/api/workshops/certificate/${filename}`, '_blank');
+            window.open(`https://672025.vercel.app/api/workshops/certificate/${filename}`, '_blank');
         }
 
         async function filterWorkshops() {
@@ -310,7 +310,7 @@ async function fetchWorkshops() {
             const type = document.getElementById('typeFilter').value;
 
             try {
-                const response = await fetch('http://localhost:4009/api/workshops/all');
+                const response = await fetch('https://672025.vercel.app/api/workshops/all');
                 const data = await response.json();
 
                 if (data.success) {

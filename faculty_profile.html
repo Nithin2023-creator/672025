@@ -308,7 +308,7 @@
 
                 console.log('Fetching profile for email:', userEmail);
                 
-                const response = await fetch(`http://localhost:4009/api/faculty/details/byEmail/${userEmail}`);
+                const response = await fetch(`https://672025.vercel.app/api/faculty/details/byEmail/${userEmail}`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -632,7 +632,7 @@
 
                 // Only send update if there are changes
                 if (Object.keys(updatedData).length > 0) {
-                    const response = await fetch('http://localhost:4009/api/faculty/details/update', {
+                    const response = await fetch('https://672025.vercel.app/api/faculty/details/update', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'

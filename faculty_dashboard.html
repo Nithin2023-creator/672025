@@ -727,7 +727,7 @@ const menuIcon = document.querySelector('#menu-icon');
         async function checkProfileStatus() {
             const userEmail = localStorage.getItem('userEmail');
             try {
-                const response = await fetch(`http://localhost:4009/api/faculty/details/check?email=${userEmail}`);
+                const response = await fetch(`https://672025.vercel.app/api/faculty/details/check?email=${userEmail}`);
                 const data = await response.json();
                 
                 const statusText = document.getElementById('profileStatus');
@@ -752,7 +752,7 @@ const menuIcon = document.querySelector('#menu-icon');
         // Add this to your existing script section
         async function fetchNotifications() {
             try {
-                const response = await fetch('http://localhost:4009/api/notifications/active');
+                const response = await fetch('https://672025.vercel.app/api/notifications/active');
                 const data = await response.json();
                 
                 if (data.success && data.notifications.length > 0) {
@@ -909,7 +909,7 @@ const menuIcon = document.querySelector('#menu-icon');
     const userEmail = localStorage.getItem('userEmail');
     try {
         // Change this endpoint to match your backend
-        const response = await fetch(`http://localhost:4009/api/faculty/all-data/${userEmail}`);
+        const response = await fetch(`https://672025.vercel.app/api/faculty/all-data/${userEmail}`);
         const data = await response.json();
         
         if (data.data?.skills) {
@@ -974,7 +974,7 @@ async function addSubject() {
     
     const userEmail = localStorage.getItem('userEmail');
     try {
-        await fetch('http://localhost:4009/api/faculty/subjects', {
+        await fetch('https://672025.vercel.app/api/faculty/subjects', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: userEmail, subject: newSubject })
@@ -989,7 +989,7 @@ async function addSubject() {
 async function deleteSkill(skill) {
     const userEmail = localStorage.getItem('userEmail');
     try {
-        await fetch('http://localhost:4009/api/faculty/skills', {
+        await fetch('https://672025.vercel.app/api/faculty/skills', {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: userEmail, skill })
@@ -1012,7 +1012,7 @@ async function addSkill() {
         }
 
         try {
-            const response = await fetch('http://localhost:4009/api/faculty/skills', {
+            const response = await fetch('https://672025.vercel.app/api/faculty/skills', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: userEmail, skill: newSkill })
@@ -1034,7 +1034,7 @@ async function addSkill() {
 async function deleteSubject(subject) {
     const userEmail = localStorage.getItem('userEmail');
     try {
-        await fetch('http://localhost:4009/api/faculty/subjects', {
+        await fetch('https://672025.vercel.app/api/faculty/subjects', {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: userEmail, subject })
@@ -1066,14 +1066,14 @@ async function saveSkill(index) {
     
     try {
         // First delete the old skill
-        await fetch('http://localhost:4009/api/faculty/skills', {
+        await fetch('https://672025.vercel.app/api/faculty/skills', {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: userEmail, skill: oldSkill })
         });
         
         // Then add the new skill
-        await fetch('http://localhost:4009/api/faculty/skills', {
+        await fetch('https://672025.vercel.app/api/faculty/skills', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: userEmail, skill: newSkill })
@@ -1106,14 +1106,14 @@ async function saveSubject(index) {
     
     try {
         // First delete the old subject
-        await fetch('http://localhost:4009/api/faculty/subjects', {
+        await fetch('https://672025.vercel.app/api/faculty/subjects', {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: userEmail, subject: oldSubject })
         });
         
         // Then add the new subject
-        await fetch('http://localhost:4009/api/faculty/subjects', {
+        await fetch('https://672025.vercel.app/api/faculty/subjects', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: userEmail, subject: newSubject })
@@ -1136,13 +1136,13 @@ async function saveSubject(index) {
     const oldSubject = subjectItem.querySelector('.subject-text').textContent;
     
     try {
-        await fetch('http://localhost:4009/api/faculty/subjects', {
+        await fetch('https://672025.vercel.app/api/faculty/subjects', {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: userEmail, subject: oldSubject })
         });
         
-        await fetch('http://localhost:4009/api/faculty/subjects', {
+        await fetch('https://672025.vercel.app/api/faculty/subjects', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: userEmail, subject: newSubject })
