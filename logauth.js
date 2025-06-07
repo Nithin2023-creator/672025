@@ -1,10 +1,3 @@
-
-
-
-
-
-
-
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -35,7 +28,8 @@ app.use(cors({
          'https://672025.vercel.app', // Your Vercel URL
         'http://localhost:4009'        // Local development
     ],
-    credentials: true
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
 }));
 app.use(express.json());
 
@@ -618,46 +612,67 @@ app.post('/signup', async (req, res) => {
 
 app.post('/login', async (req, res) => {
     try {
-        const { email, password } = req.body;
-        console.log('Login attempt:', { email }); // Debug log
+        const { email, password, department, role } = req.body;
 
-        // Find user by email
-        const user = await User.findOne({ email });
+        // Validate input
+        if (!email || !password || !department || !role) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Please provide all required fields' 
+            });
+        }
+
+        // Find user by email and department
+        const user = await User.findOne({ 
+            email: email,
+            department: department,
+            role: role
+        });
+
         if (!user) {
-            return res.status(401).json({ success: false, message: 'User not found' });
+            return res.status(404).json({ 
+                success: false, 
+                message: 'User not found' 
+            });
         }
 
-        // Verify password
-        const validPassword = await bcrypt.compare(password, user.password);
-        if (!validPassword) {
-            return res.status(401).json({ success: false, message: 'Invalid password' });
+        // Compare password
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(401).json({ 
+                success: false, 
+                message: 'Invalid credentials' 
+            });
         }
 
-        // If email and password match, login is successful
+        // Update login history
         user.lastLogin = new Date();
+        user.loginCount += 1;
         user.loginHistory.push({
             timestamp: new Date(),
             device: req.headers['user-agent']
         });
-        user.loginCount = (user.loginCount || 0) + 1;
         await user.save();
 
-        res.json({
+        // Send success response
+        res.status(200).json({
             success: true,
-            name: user.name,
-            email: user.email,
-            role: user.role,
-            department: user.department,
-            profilePhoto: user.profilePhoto,
-            lastLogin: user.lastLogin,
-            loginCount: user.loginCount,
-            redirectUrl: user.role === 'HOD' ? '/hod_dashboard' : 
-                        user.role === 'Admin' ? '/admin_dashboard' : 
-                        '/faculty_dashboard'
+            message: 'Login successful',
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+                department: user.department
+            }
         });
+
     } catch (error) {
         console.error('Login error:', error);
-        res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ 
+            success: false, 
+            message: 'Internal server error' 
+        });
     }
 });
 
@@ -2688,7 +2703,7 @@ app.get('/api/faculty/all-data/:email', async (req, res) => {
 
 
 // Start server
-const PORT = 4009;
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+const PORT = process.env.PORT || 4009;
+server.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });
