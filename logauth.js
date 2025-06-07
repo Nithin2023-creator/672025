@@ -221,31 +221,35 @@ app.get('/auth/google/callback', async (req, res) => {
         const { code } = req.query;
         const { tokens } = await googleClient.getToken(code);
         
-        // Verify the ID token
         const ticket = await googleClient.verifyIdToken({
             idToken: tokens.id_token,
-            audience: googleClient._clientId
+            audience: '940020976752-ee8dupcuupmhepgsu70dcvsou7vs3rpi.apps.googleusercontent.com'
         });
 
         const payload = ticket.getPayload();
-        const userEmail = payload.email;
-
-        // Find or create user in your database
-        let user = await User.findOne({ email: userEmail });
+        
+        // Check if user exists with this email
+        let user = await User.findOne({ email: payload.email });
         if (!user) {
-            // Create new user if not exists
+            // Create new user
             user = new User({
                 name: payload.name,
-                email: userEmail,
+                email: payload.email,
+                password: await bcrypt.hash(Math.random().toString(36), 10),
+                role: 'Faculty',
+                department: 'CSE',
                 googleId: payload.sub,
-                profilePhoto: payload.picture,
-                role: 'Faculty', // Set default role
-                department: 'CSE' // Set default department
+                profilePhoto: payload.picture
             });
             await user.save();
         }
 
-        // Redirect based on role
+        // Update user's Google info
+        user.googleId = payload.sub;
+        user.profilePhoto = payload.picture;
+        await user.save();
+
+        // Redirect to appropriate dashboard
         let redirectUrl = '/faculty_dashboard';
         if (user.role === 'HOD') {
             redirectUrl = '/hod_dashboard';
@@ -253,15 +257,10 @@ app.get('/auth/google/callback', async (req, res) => {
             redirectUrl = '/admin_dashboard';
         }
 
-        // Set user session or token
-        const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        
-        // Redirect with token
-        res.redirect(`${redirectUrl}?token=${token}`);
-
+        res.redirect(redirectUrl);
     } catch (error) {
         console.error('Google OAuth callback error:', error);
-        res.status(500).send('Authentication failed');
+        res.redirect('/login?error=auth_failed');
     }
 });
 
