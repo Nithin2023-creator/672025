@@ -1,0 +1,5 @@
+# Ignore Vercel deployment folder
+.vercel/
+
+# Ignore Node.js dependencies
+node_modules/
