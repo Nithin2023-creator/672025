@@ -613,9 +613,12 @@ app.post('/signup', async (req, res) => {
 app.post('/login', async (req, res) => {
     try {
         const { email, password, department, role } = req.body;
+        
+        console.log('Login attempt:', { email, department, role }); // Debug log
 
         // Validate input
         if (!email || !password || !department || !role) {
+            console.log('Missing fields:', { email: !!email, password: !!password, department: !!department, role: !!role });
             return res.status(400).json({ 
                 success: false, 
                 message: 'Please provide all required fields' 
@@ -629,6 +632,8 @@ app.post('/login', async (req, res) => {
             role: role
         });
 
+        console.log('User found:', !!user); // Debug log
+
         if (!user) {
             return res.status(404).json({ 
                 success: false, 
@@ -638,6 +643,8 @@ app.post('/login', async (req, res) => {
 
         // Compare password
         const isMatch = await bcrypt.compare(password, user.password);
+        console.log('Password match:', isMatch); // Debug log
+
         if (!isMatch) {
             return res.status(401).json({ 
                 success: false, 
@@ -668,10 +675,15 @@ app.post('/login', async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Login error:', error);
+        console.error('Login error details:', {
+            message: error.message,
+            stack: error.stack,
+            name: error.name
+        });
         res.status(500).json({ 
             success: false, 
-            message: 'Internal server error' 
+            message: 'Internal server error',
+            error: error.message // Only in development
         });
     }
 });
