@@ -8,7 +8,6 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
     <!-- Google Sign In -->
-    <script src="https://apis.google.com/js/platform.js" async defer></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <meta name="google-signin-client_id" content="940020976752-ee8dupcuupmhepgsu70dcvsou7vs3rpi.apps.googleusercontent.com">
     <meta name="google-signin-cookiepolicy" content="single_host_origin">
@@ -681,8 +680,21 @@
     display: none;
 }
 
-    
-</style>
+        .error-message {
+            color: #dc3545;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .google-btn-container {
+            margin: 20px 0;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
     <!-- Add this right after <body> tag -->
@@ -709,6 +721,8 @@
             </button>
         </div>
 
+        <div id="error-message" class="error-message"></div>
+
         <form id="loginForm">
             <input type="email" class="form-control" placeholder="Email" required>
             <input type="text" 
@@ -730,30 +744,31 @@
                 <span>OR</span>
     
             
-            <div id="g_id_onload"
-                data-client_id="940020976752-ee8dupcuupmhepgsu70dcvsou7vs3rpi.apps.googleusercontent.com"
-                data-context="signin"
-                data-ux_mode="redirect"
-                data-login_uri="https://672025.vercel.app/auth/google"
-                data-auto_prompt="false"
-                data-auto_select="true">
+            <div class="google-btn-container">
+                <div id="g_id_onload"
+                    data-client_id="940020976752-ee8dupcuupmhepgsu70dcvsou7vs3rpi.apps.googleusercontent.com"
+                    data-context="signin"
+                    data-ux_mode="popup"
+                    data-callback="handleGoogleSignIn"
+                    data-auto_prompt="false">
+                </div>
+                <div class="g_id_signin"
+                    data-type="standard"
+                    data-size="large"
+                    data-theme="outline"
+                    data-text="sign_in_with"
+                    data-shape="rectangular"
+                    data-logo_alignment="left">
+                </div>
             </div>
     </div>
-    <div class="g_id_signin"
-             data-type="standard"
-             data-size="large"
-             data-theme="outline"
-             data-text="sign_in_with"
-             data-shape="rectangular"
-             data-width="330">
-        </div>
-        <br>
+    <br>
 
 
-        <p class="text-center mb-0">
-            Don't have an account? 
-            <a href="#" onclick="showSignup()">Sign up</a>
-        </p>
+    <p class="text-center mb-0">
+        Don't have an account? 
+        <a href="#" onclick="showSignup()">Sign up</a>
+    </p>
     </div>
         
         
@@ -956,48 +971,67 @@ const backendUrl = window.location.hostname === 'localhost' ?
         }
        
         function handleGoogleSignIn(response) {
-            if (response.credential) {
-                fetch(`${backendUrl}/auth/google`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        token: response.credential
-                    })
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.success) {
-                        localStorage.setItem('userName', data.name);
-                        localStorage.setItem('userEmail', data.email);
-                        localStorage.setItem('userRole', data.role);
-                        localStorage.setItem('userDepartment', data.department);
-                        localStorage.setItem('profilePhoto', data.profilePhoto);
-
-                        // Redirect based on role
-                        if (data.role === 'Faculty') {
-                            window.location.href = '/faculty_dashboard';
-                        } else if (data.role === 'HOD') {
-                            window.location.href = '/hod_dashboard';
-                        } else if (data.role === 'Admin') {
-                            window.location.href = '/admin_dashboard';
-                        }
-                    } else {
-                        console.error('Login failed:', data.message);
-                        alert('Login failed: ' + data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Login failed. Please try again.');
-                });
+            const errorMessageDiv = document.getElementById('error-message');
+            
+            if (!response.credential) {
+                errorMessageDiv.textContent = 'Google sign-in failed. Please try again.';
+                errorMessageDiv.style.display = 'block';
+                return;
             }
+
+            fetch('https://672025.vercel.app/auth/google', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    token: response.credential
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Store user data
+                    localStorage.setItem('userName', data.name);
+                    localStorage.setItem('userEmail', data.email);
+                    localStorage.setItem('userRole', data.role);
+                    localStorage.setItem('userDepartment', data.department);
+                    localStorage.setItem('profilePhoto', data.profilePhoto);
+
+                    // Show success message
+                    errorMessageDiv.textContent = 'Login successful! Redirecting...';
+                    errorMessageDiv.style.backgroundColor = '#d4edda';
+                    errorMessageDiv.style.borderColor = '#c3e6cb';
+                    errorMessageDiv.style.color = '#155724';
+                    errorMessageDiv.style.display = 'block';
+
+                    // Redirect based on role
+                    setTimeout(() => {
+                        switch(data.role) {
+                            case 'Admin':
+                                window.location.href = '/admin_dashboard';
+                                break;
+                            case 'HOD':
+                                window.location.href = '/hod_dashboard';
+                                break;
+                            default:
+                                window.location.href = '/faculty_dashboard';
+                        }
+                    }, 1500);
+                } else {
+                    throw new Error(data.message || 'Login failed');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                errorMessageDiv.textContent = error.message || 'Login failed. Please try again.';
+                errorMessageDiv.style.display = 'block';
+            });
         }
 
         function validateDepartment(input) {

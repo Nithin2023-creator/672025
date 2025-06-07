@@ -691,6 +691,14 @@ app.post('/login', async (req, res) => {
 app.post('/auth/google', async (req, res) => {
     try {
         const { token } = req.body;
+        
+        if (!token) {
+            return res.status(400).json({
+                success: false,
+                message: 'No token provided'
+            });
+        }
+
         const ticket = await googleClient.verifyIdToken({
             idToken: token,
             audience: '940020976752-ee8dupcuupmhepgsu70dcvsou7vs3rpi.apps.googleusercontent.com'
@@ -698,13 +706,44 @@ app.post('/auth/google', async (req, res) => {
 
         const payload = ticket.getPayload();
         
+        if (!payload || !payload.email) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid token payload'
+            });
+        }
+
         // Check if user exists with this email
         const user = await User.findOne({ email: payload.email });
         if (!user) {
-            return res.status(401).json({
-                success: false,
-                message: 'Please sign up first before using Google Sign-In'
+            // Create a new user with default values
+            const newUser = new User({
+                name: payload.name,
+                email: payload.email,
+                password: await bcrypt.hash(Math.random().toString(36), 10), // Generate random password
+                role: 'Faculty', // Default role
+                department: 'CSE', // Default department
+                googleId: payload.sub,
+                profilePhoto: payload.picture
             });
+
+            try {
+                await newUser.save();
+                return res.json({
+                    success: true,
+                    name: newUser.name,
+                    email: newUser.email,
+                    role: newUser.role,
+                    department: newUser.department,
+                    profilePhoto: newUser.profilePhoto
+                });
+            } catch (saveError) {
+                console.error('Error saving new Google user:', saveError);
+                return res.status(500).json({
+                    success: false,
+                    message: 'Failed to create new user account'
+                });
+            }
         }
 
         // Update user's Google-specific info
@@ -722,9 +761,18 @@ app.post('/auth/google', async (req, res) => {
         });
     } catch (error) {
         console.error('Google Auth Error:', error);
+        
+        // Provide more specific error messages
+        let errorMessage = 'Google authentication failed';
+        if (error.message.includes('invalid_token')) {
+            errorMessage = 'Invalid or expired token';
+        } else if (error.message.includes('invalid_client')) {
+            errorMessage = 'Invalid client configuration';
+        }
+        
         res.status(500).json({ 
             success: false, 
-            message: 'Google authentication failed',
+            message: errorMessage,
             error: error.message 
         });
     }
