@@ -31,7 +31,8 @@ mongoose.connection.once('open', () => {
 const app = express();
 app.use(cors({
     origin: [
-        'https://fdms-kmit.vercel.app', // Your Vercel URL
+        'https://fdms-kmit.vercel.app',
+         'https://672025.vercel.app', // Your Vercel URL
         'http://localhost:4009'        // Local development
     ],
     credentials: true
@@ -48,7 +49,11 @@ const { Server } = require("socket.io");
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-      origin: "http://localhost:4009",
+        origin: [
+            'https://fdms-kmit.vercel.app',
+             'https://672025.vercel.app', // Your Vercel URL
+            'http://localhost:4009'        // Local development
+        ],
       methods: ["GET", "POST"]
     }
 });
@@ -209,7 +214,7 @@ const User = mongoose.model('User', userSchema);
 const googleClient = new OAuth2Client({
     clientId: '940020976752-ee8dupcuupmhepgsu70dcvsou7vs3rpi.apps.googleusercontent.com',
     clientSecret: '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',
-    redirectUri: 'https://fdms-kmit.vercel.app/auth/google/callback'
+    redirectUri: 'https://672025.vercel.app/auth/google/callback'
 });
 
 // ... existing code ...
